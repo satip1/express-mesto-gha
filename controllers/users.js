@@ -10,6 +10,7 @@ module.exports.getAllUsers = (req, res) => {
     .catch((err) => res.status(500).send({ message: `Запрос списка всех пользователей. Ошибка: ${err}` }));
 };
 
+
 // запрос по userId
 module.exports.getIdUser = (req, res) => {
   User.findById(req.params.userId)
