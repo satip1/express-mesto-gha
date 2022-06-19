@@ -4,22 +4,18 @@
 const User = require('../models/user');
 const { ValidationError } = require('../errors/errors');
 
-// обработка ошибки валидации
-const validData = (data, message) => {
-  if (!data) throw new ValidationError(message);
-};
-
-// обработка остальных ошибок
-const errorDefault = (req, res, err) => {
-  const message = `${req.name}: ${req.message}`;
-  res.status(err.status).send({ message });
-};
-
 // запрос всех пользователей
 module.exports.getAllUsers = (req, res, next) => {
   User.find({})
-    .then((users) => res.send({ users }))
-    .catch((err) => res.status(500).send({ message: `Запрос списка всех пользователей. Ошибка: ${err}` }));
+    .then((users) => {
+      if (!user) throw new ValidationError('Пользователь с данным id не найден');
+      res.send({ users });
+    })
+    .catch((err) => {
+      const ERROR_CODE = 400;
+      if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ err.message })
+      res.status(500).send({ message: `На сервере произошла ошибка: ${err}` });
+    })
   next();
 };
 
