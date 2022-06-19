@@ -13,7 +13,7 @@ module.exports.getAllUsers = (req, res, next) => {
     })
     .catch((err) => {
       const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ err.message })
+      if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: err.message })
       res.status(500).send({ message: `На сервере произошла ошибка: ${err}` });
     })
   next();
