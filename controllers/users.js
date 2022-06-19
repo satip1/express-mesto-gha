@@ -27,7 +27,7 @@ module.exports.getAllUsers = (req, res, next) => {
 module.exports.getIdUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      validData(user, 'Пользователь с данным id не найден');
+      if (!user) throw new ValidationError('Пользователь с данным id не найден');
       res.send({ user });
     })
     .catch((err) => {
@@ -43,8 +43,7 @@ module.exports.creatUser = (req, res, next) => {
   // создаем пользователя
   User.create({ name, about, avatar })
     .then((user) => {
-      const message = 'Некорректные данные пользователя';
-      validData(user, message);
+      if (!user) throw new ValidationError('Некорректные данные пользователя');
       res.send({ message: 'Новый пользователь создан' });
     })
     .catch((err) => errorDefault(req, res, err));
@@ -55,12 +54,10 @@ module.exports.creatUser = (req, res, next) => {
 module.exports.patchUserData = (req, res, next) => {
   const owner = req.user._id; // заглушка
   const { name, about } = req.body;
-
   // обновляем данные
   User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      const message = 'Пользователь с id не найден';
-      validData(user, message);
+      if (!user) throw new ValidationError('Пользователь с id не найден');
       // if (!user) { throw new Error('Пользователь с id не найден'); }
       res.send({ message: 'Данные пользователя обновили' });
     })
