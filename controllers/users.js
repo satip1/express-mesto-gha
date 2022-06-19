@@ -22,20 +22,12 @@ module.exports.getIdUser = (req, res) => {
 
 // создаем пользователя
 module.exports.creatUser = (req, res) => {
-  const { nameUser, aboutUser, avatarUser } = req.body;
-  // проверяем данные о пользователе
-  if (!nameUser) return res.status(400).send({ message: 'Ошибка: пустое имя пользователя' });
-  if (!aboutUser) return res.status(400).send({ message: 'Ошибка: пустое поле о пользователе' });
-  User.find({ name: nameUser })
-    .then((user) => {
-      if (user) return res.status(400).send({ message: 'Ошибка: пользователь с таким именем уже существует' });
-    })
-    .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
+  const { name, about, avatar } = req.body;
 
   // создаем пользователя
-  User.create({ nameUser, aboutUser, avatarUser })
+  User.create({ name, about, avatar })
     .then((user) => res.send(user))
-    .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
+    .catch((err) => res.status(400).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
 };
 
 // обновляем данные пользователя
@@ -43,18 +35,9 @@ module.exports.patchUserData = (req, res) => {
   const owner = req.user._id; // заглушка
   const { nameUser, aboutUser } = req.body;
 
-  // проверяем данные о пользователе
-  if (!nameUser) return res.status(400).send({ message: 'Ошибка: пустое имя пользователя' });
-  if (!aboutUser) return res.status(400).send({ message: 'Ошибка: пустое поле о пользователе' });
-  User.findById(owner)
-    .then((user) => {
-      if (!user) return res.status(404).send({ message: 'Ошибка: пользователь с таким id не найден' });
-    })
-    .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
-
   // обновляем данные
   User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true })
-    .then((user) => res.send(user))
+    .then((user) => res.send({ message: `Данные пользователяобновили` }))
     .catch((err) => res.status(500).send({ message: `Запрос на обновление данных пользователя. Ошибка: ${err}` }));
 };
 
