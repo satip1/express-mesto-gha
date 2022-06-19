@@ -7,13 +7,13 @@ const { ValidationError } = require('../errors/errors');
 // обработка ошибки валидации
 const validData = (data, message) => {
   if (!data) throw new ValidationError(message);
-}
+};
 
 // обработка остальных ошибок
-const errorDefault = (req, res, err) {
+const errorDefault = (req, res, err) => {
   const message = `${req.name}: ${req.message}`;
   res.status(err.status).send({ message });
-}
+};
 
 // запрос всех пользователей
 module.exports.getAllUsers = (req, res, next) => {
