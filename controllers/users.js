@@ -2,73 +2,52 @@
 
 // подключились к схеме
 const User = require('../models/user');
-const { ValidationError } = require('../errors/errors');
 
 // запрос всех пользователей
-module.exports.getAllUsers = (req, res, next) => {
+module.exports.getAllUsers = (req, res) => {
   User.find({})
-    .then((users) => {
-      if (!user) throw new ValidationError('Пользователь с данным id не найден');
-      res.send({ users });
-    })
-    .catch((err) => {
-      const ERROR_CODE = 400;
-      if (err.name === 'ValidationError') return res.status(ERROR_CODE).send({ message: err.message })
-      res.status(500).send({ message: `На сервере произошла ошибка: ${err}` });
-    })
-  next();
+    .then((users) => res.send({ users }))
+    .catch((err) => res.status(500).send({ message: `Запрос списка всех пользователей. Ошибка: ${err}` }));
 };
 
 // запрос по userId
-module.exports.getIdUser = (req, res, next) => {
+module.exports.getIdUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (!user) throw new ValidationError('Пользователь с данным id не найден');
-      res.send({ user });
+      if (user) res.send({ user })
+      else res.status(404).send({ message: 'Пользователь с данным id не существует' });
     })
-    .catch((err) => {
-      if (err.name === 'ValidationError') return res.status(err.statusCode).send({ message: err.message })
-      next();
-    });
+    .catch((err) => res.status(500).send({ message: `Запрос пользователя по id. Ошибка: ${err}` }));
 };
 
 // создаем пользователя
-module.exports.creatUser = (req, res, next) => {
-  const { name, about, avatar } = req.body;
+module.exports.creatUser = (req, res) => {
+  const { nameUser, aboutUser, avatarUser } = req.body;
 
   // создаем пользователя
-  User.create({ name, about, avatar })
-    .then((user) => {
-      if (!user) throw new ValidationError('Некорректные данные пользователя');
-      res.send({ message: 'Новый пользователь создан' });
-    })
-    .catch((err) => errorDefault(req, res, err));
-  next();
+  User.create({ nameUser, aboutUser, avatarUser })
+    .then((user) => res.send(user))
+    .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
 };
 
 // обновляем данные пользователя
-module.exports.patchUserData = (req, res, next) => {
+module.exports.patchUserData = (req, res) => {
   const owner = req.user._id; // заглушка
-  const { name, about } = req.body;
+  const { nameUser, aboutUser } = req.body;
+
   // обновляем данные
-  User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })
-    .then((user) => {
-      if (!user) throw new ValidationError('Пользователь с id не найден');
-      // if (!user) { throw new Error('Пользователь с id не найден'); }
-      res.send({ message: 'Данные пользователя обновили' });
-    })
-    .catch((err) => errorDefault(req, res, err));
-  next();
+  User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true })
+    .then((user) => res.send(user))
+    .catch((err) => res.status(500).send({ message: `Запрос на обновление данных пользователя. Ошибка: ${err}` }));
 };
 
 // обновляем аватар пользователя
-module.exports.patchUserAvatar = (req, res, next) => {
+module.exports.patchUserAvatar = (req, res) => {
   const owner = req.user._id; // заглушка
-  const { avatar } = req.body;
+  const { avatarUser } = req.body;
 
   // обновляем аватар
-  User.findByIdAndUpdate(owner, { avatar: avatar }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(owner, { avatar: avatarUser }, { new: true })
     .then((user) => res.send(user))
     .catch((err) => res.status(500).send({ message: `Запрос на обновление аватара пользователя. Ошибка: ${err}` }));
-  next();
 };
