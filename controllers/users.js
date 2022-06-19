@@ -42,8 +42,12 @@ module.exports.creatUser = (req, res, next) => {
 
   // создаем пользователя
   User.create({ name, about, avatar })
-    .then((user) => res.send(user))
-    .catch((err) => res.status(400).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
+    .then((user) => {
+      const message = 'Некорректные данные пользователя';
+      validData(user, message);
+      res.send({ message: 'Новый пользователь создан' });
+    })
+    .catch((err) => errorDefault(req, res, err));
   next();
 };
 
