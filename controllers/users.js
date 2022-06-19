@@ -10,7 +10,6 @@ module.exports.getAllUsers = (req, res) => {
     .catch((err) => res.status(500).send({ message: `Запрос списка всех пользователей. Ошибка: ${err}` }));
 };
 
-
 // запрос по userId
 module.exports.getIdUser = (req, res) => {
   User.findById(req.params.userId)
@@ -31,10 +30,10 @@ module.exports.creatUser = (req, res) => {
 // обновляем данные пользователя
 module.exports.patchUserData = (req, res) => {
   const owner = req.user._id; // заглушка
-  const { nameUser, aboutUser } = req.body;
+  const { name, about } = req.body;
 
   // обновляем данные
-  User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true })
+  User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true  })
     .then((user) => res.send({ message: 'Данные пользователя обновили' }))
     .catch((err) => res.status(500).send({ message: `Запрос на обновление данных пользователя. Ошибка: ${err}` }));
 };
