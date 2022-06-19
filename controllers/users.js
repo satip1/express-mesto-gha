@@ -13,11 +13,8 @@ module.exports.getAllUsers = (req, res) => {
 // запрос по userId
 module.exports.getIdUser = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => {
-      if (user) res.send({ user })
-      else res.status(404).send({ message: 'Пользователь с данным id не существует' });
-    })
-    .catch((err) => res.status(500).send({ message: `Запрос пользователя по id. Ошибка: ${err}` }));
+    .then((user) => res.send({ user }))
+    .catch((err) => res.status(404).send({ message: `Запрос пользователя по id. Ошибка: ${err}` }));
 };
 
 // создаем пользователя
@@ -37,7 +34,7 @@ module.exports.patchUserData = (req, res) => {
 
   // обновляем данные
   User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true })
-    .then((user) => res.send({ message: `Данные пользователяобновили` }))
+    .then((user) => res.send({ message: `Данные пользователя обновили` }))
     .catch((err) => res.status(500).send({ message: `Запрос на обновление данных пользователя. Ошибка: ${err}` }));
 };
 
