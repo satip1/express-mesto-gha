@@ -1,29 +1,29 @@
 // подключились к схеме
 const Card = require('../models/card');
+const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../errors/errors');
 
 // запрос всех карточек
 module.exports.getAllCards = (req, res) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => res.status(500).send({ message: `Запрос списка всех карточек. Ошибка: ${err}` }));
+    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
 };
 
 // создаем новую карточку
 module.exports.creatCard = (req, res) => {
   const { name, link, likes = [] } = req.body;
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
-  // проверяем данные
-  if (!link) return res.status(400).send({ message: 'Ошибка в адресекартинки' });
-  Card.findById(owner)
-    .then((user) => {
-      if (!user) return res.status(404).send({ message: 'Ошибка: пользователь с таким id не найден' });
-    })
-    .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
 
   // создаем новую карточку
   Card.create({ name, link, owner, likes })
-    .then((cards) => res.send(cards))
-    .catch((err) => res.status(500).send({ message: `Запрос на создание карточки. Ошибка: ${err}` }));
+    .then((cards) => res.status(OK).send({ cards }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_DATA).send({ message: `Некорректные данные карточки. Ошибка: ${err.message}` });
+        return;
+      }
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
 };
 
 // удаляем карточку
