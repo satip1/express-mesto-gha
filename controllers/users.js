@@ -2,6 +2,7 @@
 
 // подключились к схеме
 const User = require('../models/user');
+const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../errors/errors');
 
 // запрос всех пользователей
 module.exports.getAllUsers = (req, res) => {
@@ -26,11 +27,21 @@ module.exports.creatUser = (req, res) => {
 
   // создаем пользователя
   User.create({ name, about, avatar })
-    //
-    .then((user) => res.status(200).send({ user: { user: user.name, about: user.about, avatar: user.avatar, } }))
-    .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
+    .then((user) => res.status(OK).send({
+      user: {
+        user: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
+        return;
+      }
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
 };
-
 
 // обновляем данные пользователя
 module.exports.patchUserData = (req, res) => {
