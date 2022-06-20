@@ -47,31 +47,25 @@ module.exports.deleteCard = (req, res) => {
 // ставим лайк карточке
 module.exports.putLikeCard = (req, res) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
-  // проверка данных
-  Card.findById(req.params.cardId)
-    .then((card) => {
-      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
-    })
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
 
   // ставим лайк
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: owner } }, { new: true })
-    .then((card) => res.status(OK).send(card))
+    .then((card) => {
+      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+      res.status(OK).send(card);
+    })
     .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
 };
 
 // удаляем лайк карточке
 module.exports.cancelLikeCard = (req, res) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
-  // проверка данных
-  Card.findById(req.params.cardId)
-    .then((card) => {
-      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
-    })
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `Запрос на создание карточки. Ошибка: ${err}` }));
 
   // убираем лайк
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: owner } }, { new: true })
-    .then((card) => res.status(OK).send(card))
+    .then((card) => {
+      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+      res.status(OK).send(card);
+    })
     .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
 };
