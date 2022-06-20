@@ -55,7 +55,7 @@ module.exports.patchUserData = (req, res) => {
   const { nameUser, aboutUser } = req.body;
 
   // обновляем данные
-  User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true })
+  User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true, runValidators: true })
     .then((user) => {
       if (user) res.status(OK).send({ user })
       else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
@@ -72,13 +72,13 @@ module.exports.patchUserData = (req, res) => {
 // обновляем аватар пользователя
 module.exports.patchUserAvatar = (req, res) => {
   const owner = req.user._id; // заглушка
-  const { avatarUser } = req.body;
+  const { avatar } = req.body;
 
   // обновляем аватар
-  User.findByIdAndUpdate(owner, { avatar: avatarUser }, { new: true })
+  User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
     .then((user) => res.status(OK).send({ message: 'Аватар обновлен' }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(ERROR_DATA).send({ message: `Некорректные данные аватара. Ошибка: ${err.message}` });
         return;
       }
