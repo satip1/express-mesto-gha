@@ -57,7 +57,7 @@ module.exports.patchUserData = (req, res) => {
   // обновляем данные
   User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true })
     .then((user) => {
-      if (user) res.send({ user })
+      if (user) res.status(OK).send({ user })
       else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
     })
     .catch((err) => {
@@ -76,6 +76,12 @@ module.exports.patchUserAvatar = (req, res) => {
 
   // обновляем аватар
   User.findByIdAndUpdate(owner, { avatar: avatarUser }, { new: true })
-    .then((user) => res.send(user))
-    .catch((err) => res.status(500).send({ message: `Запрос на обновление аватара пользователя. Ошибка: ${err}` }));
+    .then((user) => res.status(OK).send({ message: 'Аватар обновлен' }))
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_DATA).send({ message: `Некорректные данные аватара. Ошибка: ${err.message}` });
+        return;
+      }
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
 };
