@@ -7,8 +7,8 @@ const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../error
 // запрос всех пользователей
 module.exports.getAllUsers = (req, res) => {
   User.find({})
-    .then((users) => res.send({ users }))
-    .catch((err) => res.status(500).send({ message: `Запрос списка всех пользователей. Ошибка: ${err}` }));
+    .then((users) => res.status(OK).send({ users }))
+    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
 };
 
 // запрос по userId
@@ -22,7 +22,7 @@ module.exports.getIdUser = (req, res) => {
 };
 
 // создаем пользователя
-module.exports.creatUser = (req, res) => {
+module.exports.creatUser = (req, res, next) => {
   const { name, about, avatar } = req.body;
 
   // создаем пользователя
@@ -41,6 +41,7 @@ module.exports.creatUser = (req, res) => {
       }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
     });
+  next();
 };
 
 // обновляем данные пользователя
