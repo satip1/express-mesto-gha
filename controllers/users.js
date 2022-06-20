@@ -52,10 +52,10 @@ module.exports.creatUser = (req, res) => {
 // обновляем данные пользователя
 module.exports.patchUserData = (req, res) => {
   const owner = req.user._id; // заглушка
-  const { nameUser, aboutUser } = req.body;
+  const { name, about } = req.body;
 
   // обновляем данные
-  User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true, runValidators: true })
+  User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })
     .then((user) => {
       if (user) res.status(OK).send({ user })
       else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
