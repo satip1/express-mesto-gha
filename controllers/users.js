@@ -16,10 +16,10 @@ module.exports.getIdUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user) res.status(OK).send({ user })
-      else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
+      else res.status(ERROR_DATA).send({ message: 'Пользователь с данным id не существует' });
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'CastError') {
         res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
         return;
       }
