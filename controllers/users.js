@@ -8,7 +8,7 @@ const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../error
 module.exports.getAllUsers = (req, res) => {
   User.find({})
     .then((users) => res.status(OK).send({ users }))
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
+    .catch((err) => res.status(.send({ message: `На сервере произошла ошибка: ${err}` }));
 };
 
 // запрос по userId
@@ -16,9 +16,15 @@ module.exports.getIdUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
       if (user) res.send({ user })
-      else res.status(404).send({ message: 'Пользователь с данным id не существует' });
+      else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
     })
-    .catch((err) => res.status(500).send({ message: `Запрос пользователя по id. Ошибка: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
+        return;
+      }
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
 };
 
 // создаем пользователя
