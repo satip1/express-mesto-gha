@@ -22,13 +22,14 @@ module.exports.getIdUser = (req, res) => {
 
 // создаем пользователя
 module.exports.creatUser = (req, res) => {
-  const { nameUser, aboutUser, avatarUser } = req.body;
+  const { name, about, avatar } = req.body;
 
   // создаем пользователя
-  User.create({ nameUser, aboutUser, avatarUser })
-    .then((user) => res.send(user))
+  User.create({ name, about, avatar })
+    .then((user) => res.status(200).send({ message: 'Пользователь создан'}))
     .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
 };
+
 
 // обновляем данные пользователя
 module.exports.patchUserData = (req, res) => {
