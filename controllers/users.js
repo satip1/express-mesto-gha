@@ -26,7 +26,8 @@ module.exports.creatUser = (req, res) => {
 
   // создаем пользователя
   User.create({ name, about, avatar })
-    .then((user) => res.status(200).send({ message: 'Пользователь создан'}))
+    //
+    .then((user) => res.status(200).send({ user: { user: user.name, about: user.about, avatar: user.avatar, } }))
     .catch((err) => res.status(500).send({ message: `Запрос на создание пользователя. Ошибка: ${err}` }));
 };
 
