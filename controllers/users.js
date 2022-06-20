@@ -5,10 +5,11 @@ const User = require('../models/user');
 const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../errors/errors');
 
 // запрос всех пользователей
-module.exports.getAllUsers = (req, res) => {
+module.exports.getAllUsers = (req, res, next) => {
   User.find({})
     .then((users) => res.status(OK).send({ users }))
     .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
+    next();
 };
 
 // запрос по userId
