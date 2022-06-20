@@ -56,8 +56,17 @@ module.exports.patchUserData = (req, res) => {
 
   // обновляем данные
   User.findByIdAndUpdate(owner, { name: nameUser, about: aboutUser }, { new: true })
-    .then((user) => res.send(user))
-    .catch((err) => res.status(500).send({ message: `Запрос на обновление данных пользователя. Ошибка: ${err}` }));
+    .then((user) => {
+      if (user) res.send({ user })
+      else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
+    })
+    .catch((err) => {
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
+        return;
+      }
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
 };
 
 // обновляем аватар пользователя
