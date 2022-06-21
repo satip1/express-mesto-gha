@@ -41,10 +41,15 @@ module.exports.deleteCard = (req, res) => {
       if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточкис таким id не найдено' });
       if (card.owner !== ownerUser) {
         return res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
-      }
-      card.remove();
-      return res.status(OK).send({ message: 'Карточка удалена' });
+      };
     })
+    .catch((err) => {
+      if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
+
+  Card.findByIdAndRemove(req.params.carid)
+    .then((user) => res.status(OK).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
