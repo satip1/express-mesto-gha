@@ -50,7 +50,10 @@ module.exports.deleteCard = (req, res) => {
       Card.deleteOne(card).then(() => res.status(OK).send({ message: 'Карточка удалена:' }));
     })
     .catch((err) => {
-      if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
+      if (err.name === 'CastError') {
+        res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+        return;
+      }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
     });
 };
@@ -69,12 +72,15 @@ module.exports.putLikeCard = (req, res) => {
       res.status(OK).send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+      if (err.name === 'CastError') {
+        res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+        return;
+      }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
     });
 };
 
-// удаляемпопро лайк карточке
+// удаляем лайк карточке
 module.exports.cancelLikeCard = (req, res) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
 
@@ -88,7 +94,10 @@ module.exports.cancelLikeCard = (req, res) => {
       res.status(OK).send(card);
     })
     .catch((err) => {
-      if (err.name === 'CastError') res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+      if (err.name === 'CastError') {
+        res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+        return;
+      }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
     });
 };
