@@ -31,17 +31,19 @@ module.exports.deleteCard = (req, res) => {
   const ownerUser = req.user._id; // временная заглушка для идентификатора пользователя
 
   // проверка на возможность удаления
+  // если id автора и пользователя совпадают, удалим
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточкис таким id не найдено' });
-      if (card.owner !== ownerUser) return res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
+      if (card.owner !== ownerUser)
+        return res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
+      card.remove();
+      return res.status(OK).send({ message: 'Карточка удалена' });
     })
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
-
-  // удаляем карточку
-  Card.findByIdAndRemove(req.params.cardId)
-    .then(() => res.status(OK).send({ message: 'Карточка удалена' }))
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
 };
 
 // ставим лайк карточке
