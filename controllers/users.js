@@ -20,7 +20,7 @@ module.exports.getIdUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
+        res.status(ERROR_NOT_FOUND).send({ message: `${err} Некорректные данные пользователя. Ошибка: ${err.message}` });
         return;
       }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
@@ -31,7 +31,7 @@ module.exports.getIdUser = (req, res) => {
 module.exports.creatUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  // создаем пользователя { message: 'Пользователь создан' }
+  // создаем пользователя
   User.create({ name, about, avatar })
     .then((user) => res.status(OK).send(user))
     .catch((err) => {
