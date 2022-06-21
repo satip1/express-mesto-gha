@@ -15,7 +15,7 @@ const mongoose = require('mongoose');
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
 
-const { ERROR_NOT_FOUND } = require('../errors/errors');
+const { ERROR_NOT_FOUND } = require('./errors/errors');
 
 // роуты
 // собираем пакеты
