@@ -79,7 +79,7 @@ module.exports.putLikeCard = (req, res) => {
     });
 };
 
-// удаляем лайк карточке
+// удаляемпопро лайк карточке
 module.exports.cancelLikeCard = (req, res) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
 
