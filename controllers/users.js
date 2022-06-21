@@ -20,7 +20,7 @@ module.exports.getIdUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_NOT_FOUND).send({ message: `${err} Некорректные данные пользователя. Ошибка: ${err.message}` });
+        res.status(ERROR_NOT_FOUND).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
         return;
       }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
@@ -68,9 +68,9 @@ module.exports.patchUserAvatar = (req, res) => {
   const owner = req.user._id; // заглушка
   const { avatar } = req.body;
 
-  // обновляем аватар
+  // обновляем аватар{ message: 'Аватар обновлен' }
   User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.status(OK).send({ message: 'Аватар обновлен' }))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'CastError') {
         res.status(ERROR_DATA).send({ message: `Некорректные данные аватара. Ошибка: ${err.message}` });
