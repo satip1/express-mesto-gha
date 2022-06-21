@@ -36,7 +36,7 @@ module.exports.creatCard = (req, res) => {
 module.exports.deleteCard = (req, res) => {
   const ownerUser = req.user._id; // временная заглушка для идентификатора пользователя
 
-  // проверка на возможность удаления
+  // проверка   на возможность удаления
   // если id автора и пользователя совпадают, удалим
   Card.findById(req.params.cardId)
     .then((card) => {
