@@ -2,7 +2,9 @@
 const Card = require('../models/card');
 
 // константы кодов ошибок
-const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../errors/errors');
+const {
+  OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR,
+} = require('../errors/errors');
 
 // запрос всех карточек
 module.exports.getAllCards = (req, res) => {
@@ -56,7 +58,10 @@ module.exports.putLikeCard = (req, res) => {
   // ставим лайк
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: owner } }, { new: true })
     .then((card) => {
-      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+      if (!card) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+        return;
+      }
       res.status(OK).send(card);
     })
     .catch((err) => {
@@ -65,7 +70,6 @@ module.exports.putLikeCard = (req, res) => {
     });
 };
 
-
 // удаляем лайк карточке
 module.exports.cancelLikeCard = (req, res) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
@@ -73,11 +77,14 @@ module.exports.cancelLikeCard = (req, res) => {
   // убираем лайк
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: owner } }, { new: true })
     .then((card) => {
-      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+      if (!card) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+        return;
+      }
       res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
-      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` })
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
     });
 };
