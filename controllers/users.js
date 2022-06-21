@@ -2,7 +2,9 @@
 
 // подключились к схеме
 const User = require('../models/user');
-const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../errors/errors');
+const {
+  OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR,
+} = require('../errors/errors');
 
 // запрос всех пользователей
 module.exports.getAllUsers = (req, res) => {

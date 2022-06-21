@@ -19,7 +19,9 @@ module.exports.creatCard = (req, res) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
 
   // создаем новую карточку
-  Card.create({ name, link, owner, likes })
+  Card.create({
+    name, link, owner, likes,
+  })
     .then((cards) => res.status(OK).send({ cards }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -38,10 +40,14 @@ module.exports.deleteCard = (req, res) => {
   // если id автора и пользователя совпадают, удалим
   Card.findById(req.params.cardId)
     .then((card) => {
-      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточкис таким id не найдено' });
+      if (!card) {
+        res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточкис таким id не найдено' });
+        return;
+      }
       if (card.owner !== ownerUser) {
-        return res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
-      };
+        res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
+        return;
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
@@ -49,7 +55,7 @@ module.exports.deleteCard = (req, res) => {
     });
 
   Card.findByIdAndRemove(req.params.carid)
-    .then((user) => res.status(OK).send({ message: 'Карточка удалена' }))
+    .then(() => res.status(OK).send({ message: 'Карточка удалена' }))
     .catch((err) => {
       if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });

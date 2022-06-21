@@ -1,7 +1,9 @@
 // роутеры для пользователей
 const router = require('express').Router();
-const { getAllCards, creatCard, deleteCard,
-  putLikeCard, cancelLikeCard } = require('../controllers/cards');
+const {
+  getAllCards, creatCard, deleteCard,
+  putLikeCard, cancelLikeCard,
+} = require('../controllers/cards');
 
 router.get('/cards', getAllCards);
 router.post('/cards', creatCard);

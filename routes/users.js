@@ -1,7 +1,9 @@
 // роутеры для пользователей
 const router = require('express').Router();
-const { getAllUsers, getIdUser, creatUser,
-  patchUserData, patchUserAvatar } = require('../controllers/users');
+const {
+  getAllUsers, getIdUser, creatUser,
+  patchUserData, patchUserAvatar,
+} = require('../controllers/users');
 
 router.get('/users', getAllUsers);
 router.get('/users/:userId', getIdUser);
