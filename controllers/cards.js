@@ -1,5 +1,7 @@
 // подключились к схеме
 const Card = require('../models/card');
+
+// константы кодов ошибок
 const { OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR } = require('../errors/errors');
 
 // запрос всех карточек
@@ -35,8 +37,9 @@ module.exports.deleteCard = (req, res) => {
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточкис таким id не найдено' });
-      if (card.owner !== ownerUser)
+      if (card.owner !== ownerUser) {
         return res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
+      }
       card.remove();
       return res.status(OK).send({ message: 'Карточка удалена' });
     })
@@ -73,7 +76,7 @@ module.exports.cancelLikeCard = (req, res) => {
       if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
       res.status(OK).send(card);
     })
-    .catch((err) =>{
+    .catch((err) => {
       if (err.name === 'CastError') res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` })
     });

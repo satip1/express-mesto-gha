@@ -15,7 +15,7 @@ module.exports.getAllUsers = (req, res) => {
 module.exports.getIdUser = (req, res) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (user) res.status(OK).send({ user })
+      if (user) res.status(OK).send({ user });
       else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
     })
     .catch((err) => {
@@ -51,7 +51,7 @@ module.exports.patchUserData = (req, res) => {
   // обновляем данные
   User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      if (user) res.status(OK).send({ user })
+      if (user) res.status(OK).send({ user });
       else res.status(ERROR_NOT_FOUND).send({ message: 'Пользователь с данным id не существует' });
     })
     .catch((err) => {
