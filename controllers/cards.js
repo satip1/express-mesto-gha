@@ -34,7 +34,7 @@ module.exports.creatCard = (req, res) => {
 
 // удаляем карточку
 module.exports.deleteCard = (req, res) => {
-  // const ownerUser = req.user._id; // временная заглушка для идентификатора пользователя
+  const ownerUser = req.user._id; // временная заглушка для идентификатора пользователя
 
   // проверка на возможность удаления
   // если id автора и пользователя совпадают, удалим
@@ -42,11 +42,10 @@ module.exports.deleteCard = (req, res) => {
     .then((card) => {
       if (!card) {
         res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточкис таким id не найдено' });
-        return;
       }
-      // if (card.owner !== ownerUser) {
-      //   res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
-      // }
+      if (card.owner !== ownerUser) {
+        res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
+      }
     })
     .catch((err) => {
       if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
