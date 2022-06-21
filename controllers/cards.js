@@ -53,11 +53,15 @@ module.exports.putLikeCard = (req, res) => {
   // ставим лайк
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: owner } }, { new: true })
     .then((card) => {
-      if (!card) return res.status(ERROR_DATA).send({ message: 'Ошибка: карточки с таким id не найдено' });
+      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
       res.status(OK).send(card);
     })
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
+    .catch((err) => {
+      if (err.name === 'CastError') res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+    });
 };
+
 
 // удаляем лайк карточке
 module.exports.cancelLikeCard = (req, res) => {
