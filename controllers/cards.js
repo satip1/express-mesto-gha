@@ -70,8 +70,11 @@ module.exports.cancelLikeCard = (req, res) => {
   // убираем лайк
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: owner } }, { new: true })
     .then((card) => {
-      if (!card) return res.status(ERROR_DATA).send({ message: 'Ошибка: карточки с таким id не найдено' });
+      if (!card) return res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
       res.status(OK).send(card);
     })
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
+    .catch((err) =>{
+      if (err.name === 'CastError') res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` })
+    });
 };
