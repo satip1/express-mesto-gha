@@ -46,14 +46,8 @@ module.exports.deleteCard = (req, res) => {
       if (card.owner !== ownerUser) {
         res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
       }
+      card.remove().then(() => res.status(OK).send({ message: 'Карточка удалена:' }));
     })
-    .catch((err) => {
-      if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
-      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
-    });
-
-  Card.findByIdAndRemove(req.params.carid)
-    .then((card) => res.status(OK).send({ message: `Карточка удалена: ${card}` }))
     .catch((err) => {
       if (err.name === 'CastError') { res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` }); }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
