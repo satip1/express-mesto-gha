@@ -31,9 +31,9 @@ module.exports.getIdUser = (req, res) => {
 module.exports.creatUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
-  // создаем пользователя
+  // создаем пользователя { message: 'Пользователь создан' }
   User.create({ name, about, avatar })
-    .then((user) => res.status(OK).send({ message: 'Пользователь создан' }))
+    .then((user) => res.status(OK).send(user))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
