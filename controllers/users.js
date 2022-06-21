@@ -22,7 +22,7 @@ module.exports.getIdUser = (req, res) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_NOT_FOUND).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
+        res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
         return;
       }
       res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
