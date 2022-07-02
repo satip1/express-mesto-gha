@@ -2,6 +2,8 @@
 
 const mongoose = require('mongoose');
 
+const { REG_LINK } = require('../constants/constants');
+
 // схема бд карточек
 const cardSchema = new mongoose.Schema({
   name: {
@@ -13,6 +15,10 @@ const cardSchema = new mongoose.Schema({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (v) => REG_LINK.test(v),
+      message: 'Адрес картинки аватара некорректен',
+    },
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,

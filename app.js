@@ -6,33 +6,58 @@ const app = express();
 const { PORT = 3000 } = process.env;
 
 // подключаем парсер для пакетов
-const bodyParser = require('body-parser');
-
 // создаем подключение к базе
+const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
-// импортируем роутеры
+// импортируем библиотеку для валидации запросов на регистрацию и создание пользователя
+const { celebrate, Joi } = require('celebrate');
+
+// импортируем роутеры и контроллеры
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
+const { auth } = require('./middlewares/auth');
+const { login, createUser } = require('./controllers/users');
+const { error } = require('./middlewares/error');
 
-const { ERROR_NOT_FOUND } = require('./errors/errors');
+const { ErrorNotFound } = require('./errors/ErrorNotFound'); // 404
 
 // роуты
 // собираем пакеты
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// временное решение
-app.use((req, res, next) => {
-  // вставьте сюда _id созданного в предыдущем пункте пользователя
-  req.user = { _id: '62ab7b35b8324f184cb93f99' };
-  next();
-});
+
+// роутер для валидации запроса и создания пользователя
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+      avatar: Joi.string(),
+    }),
+  }),
+  createUser,
+);
+// роутер для валидации запроса и логирования пользователя
+app.post('/signin', login);
+
+// защита роутов
+app.use(auth);
 // роуты для users
 app.use(routerUsers);
 // роуты для карточек
 app.use(routerCards);
+
 // роут для некорректных адресов
-app.use('*', (req, res) => { res.status(ERROR_NOT_FOUND).send({ message: 'Несуществующий адрес' }); });
+app.use('*', (req, res, next) => {
+  next(new ErrorNotFound('Несуществующий адрес'));
+});
+
+// обработчик всех ошибок
+app.use(error);
 
 // запустили веб-сервер
 app.listen(PORT, () => {

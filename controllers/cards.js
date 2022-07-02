@@ -1,20 +1,23 @@
 // подключились к схеме
 const Card = require('../models/card');
 
+const ErrorOtherError = require('../errors/ErrorOtherError'); // 500
+const ErrorBadData = require('../errors/ErrorBadData'); // 400
+const ErrorDeleteCard = require('../errors/ErrorDeleteCard'); // 403
+const ErrorNotFound = require('../errors/ErrorNotFound'); // 404
+
 // константы кодов ошибок
-const {
-  OK, ERROR_DATA, ERROR_NOT_FOUND, ERROR_OTHER_ERROR,
-} = require('../errors/errors');
+const { OK } = require('../constants/constants');
 
 // запрос всех карточек
-module.exports.getAllCards = (req, res) => {
+module.exports.getAllCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` }));
+    .catch(() => next(new ErrorOtherError()));
 };
 
 // создаем новую карточку
-module.exports.creatCard = (req, res) => {
+module.exports.creatCard = (req, res, next) => {
   const { name, link, likes = [] } = req.body;
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
 
@@ -25,79 +28,79 @@ module.exports.creatCard = (req, res) => {
     .then((cards) => res.status(OK).send({ cards }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        res.status(ERROR_DATA).send({ message: `Некорректные данные карточки. Ошибка: ${err.message}` });
+        next(new ErrorBadData(`Некорректные данные карточки. Ошибка: ${err.message}`));
         return;
       }
-      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+      next(new ErrorOtherError());
     });
 };
 
 // удаляем карточку
-module.exports.deleteCard = (req, res) => {
-  // const ownerUser = req.user._id; // временная заглушка для идентификатора пользователя
+module.exports.deleteCard = (req, res, next) => {
+  const ownerUser = req.user._id; // временная заглушка для идентификатора пользователя
 
   // проверка   на возможность удаления
   // если id автора и пользователя совпадают, удалим
   Card.findById(req.params.cardId)
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточкис таким id не найдено' });
+        next(new ErrorNotFound('Ошибка: карточкис таким id не найдено'));
         return;
       }
-      // if (card.owner !== ownerUser) {
-      //   res.status(ERROR_DATA).send({ message: 'Ошибка: вы не можете удалить эту карточку' });
-      // }
+      if (card.owner !== ownerUser) {
+        next(new ErrorDeleteCard('Ошибка: вы не можете удалить эту карточку'));
+      }
       Card.deleteOne(card).then(() => res.status(OK).send({ message: 'Карточка удалена:' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+        next(new ErrorBadData(`Некорректное id карточки: ${err}`));
         return;
       }
-      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+      next(new ErrorOtherError());
     });
 };
 
 // ставим лайк карточке
-module.exports.putLikeCard = (req, res) => {
+module.exports.putLikeCard = (req, res, next) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
 
   // ставим лайк
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: owner } }, { new: true })
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+        next(new ErrorNotFound('Ошибка: карточкис таким id не найдено'));
         return;
       }
       res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+        next(new ErrorBadData(`Некорректное id карточки: ${err}`));
         return;
       }
-      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+      next(new ErrorOtherError());
     });
 };
 
 // удаляем лайк карточке
-module.exports.cancelLikeCard = (req, res) => {
+module.exports.cancelLikeCard = (req, res, next) => {
   const owner = req.user._id; // временная заглушка для идентификатора пользователя
 
   // убираем лайк
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: owner } }, { new: true })
     .then((card) => {
       if (!card) {
-        res.status(ERROR_NOT_FOUND).send({ message: 'Ошибка: карточки с таким id не найдено' });
+        next(new ErrorNotFound('Ошибка: карточкис таким id не найдено'));
         return;
       }
       res.status(OK).send(card);
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.status(ERROR_DATA).send({ message: `Некорректное id карточки: ${err}` });
+        next(new ErrorBadData(`Некорректное id карточки: ${err}`));
         return;
       }
-      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
+      next(new ErrorOtherError());
     });
 };
