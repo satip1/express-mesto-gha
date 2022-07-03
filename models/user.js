@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const validEmail = require('validator/lib/isEmail');
 const bcrypt = require('bcryptjs');
 
-const { ErrorLogin } = require('../errors/ErrorLogin');
+const ErrorLogin = require('../errors/ErrorLogin');
 const { REG_LINK } = require('../constants/constants');
 
 // схема бд пользователя

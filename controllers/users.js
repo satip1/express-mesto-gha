@@ -119,5 +119,5 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id }, SECRET_CODE, { expiresIn: '7d' });
       res.status(OK).send({ token });
     })
-    .catch(next(new ErrorLogin('Неверный email или пароль')));
+    .catch(() => { next(new ErrorLogin('Неверный email или пароль 3')); });
 };
