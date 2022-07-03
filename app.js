@@ -26,6 +26,12 @@ const { ErrorNotFound } = require('./errors/ErrorNotFound'); // 404
 // собираем пакеты
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+// временное решение
+app.use((req, res, next) => {
+  // вставьте сюда _id созданного в предыдущем пункте пользователя
+  req.user = { _id: '62ab7b35b8324f184cb93f99' };
+  next();
+});
 
 // роутер для валидации запроса и создания пользователя
 app.post(
