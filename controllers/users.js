@@ -117,7 +117,7 @@ module.exports.login = (req, res, next) => {
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, SECRET_CODE, { expiresIn: '7d' });
-      res.send({ token });
+      res.status(OK).send({ token });
     })
     .catch(next(new ErrorLogin('Неверный email или пароль')));
 };
