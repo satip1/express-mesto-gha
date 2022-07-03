@@ -68,8 +68,9 @@ module.exports.createUser = (req, res, next) => {
 
 // обновляем данные пользователя
 module.exports.patchUserData = (req, res, next) => {
-  const owner = req.user._id; // заглушка
-  const { name, about } = req.body;
+  //const owner = req.user._id; // заглушка
+  const { owner, name, about } = req.body;
+
 
   // обновляем данные
   User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })

@@ -2,7 +2,6 @@
 
 module.exports.error = (err, req, res, next) => {
   const { name, statusCode, message } = err;
-
   res
     .status(statusCode)
     .send({
