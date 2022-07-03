@@ -8,5 +8,5 @@ module.exports.error = (err, req, res, next) => {
       message: `${name} Код ошибки ${statusCode}: ${message}`,
     });
 
-  next();
+  return next();
 };
