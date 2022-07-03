@@ -65,7 +65,7 @@ module.exports.createUser = (req, res, next) => {
         return;
       }
       if (err.code === 11000) {
-        next(new ErrorBadEmail('Пользователь с данным емейл уже существует'));
+        next(new ErrorNotFound('Пользователь с данным емейл уже существует'));
         return;
       }
       // console.log(err);
