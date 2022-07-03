@@ -12,13 +12,14 @@ module.exports.auth = (req, res, next) => {
   if (!authorization || !authorization.startsWith('Bearer ')) {
     return next(new ErrorLogin('Необходима авторизация'));
   }
+
   const token = authorization.replace('Bearer ', '');
   let payload;
 
   try {
     payload = jwt.verify(token, SECRET_CODE);
   } catch (err) {
-    next(new ErrorLogin('Необходима авторизация'));
+    return next(new ErrorLogin('Необходима авторизация'));
   }
 
   req.user = payload;

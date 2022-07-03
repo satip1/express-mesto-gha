@@ -6,7 +6,7 @@ const textError = 'На сервере произошла ошибка';
 class ErrorLogin extends Error {
   constructor(message = textError) {
     super(message);
-    this.name = 'ErrorNotFound';
+    this.name = 'ErrorLogin';
     this.statusCode = ERROR_LOGIN;
   }
 }

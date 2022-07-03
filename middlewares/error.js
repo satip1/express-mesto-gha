@@ -5,7 +5,7 @@ module.exports.error = (err, req, res, next) => {
   res
     .status(statusCode)
     .send({
-      message: `${name}  Код ошибки ${statusCode}: ${message}`,
+      message: `${name} Код ошибки ${statusCode}: ${message}`,
     });
 
   next();
