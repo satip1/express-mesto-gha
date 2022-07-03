@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 
 // импортируем библиотеку для валидации запросов на регистрацию и создание пользователя
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 
 // импортируем роутеры и контроллеры
 const routerUsers = require('./routes/users');
@@ -56,6 +56,8 @@ app.use('*', (req, res, next) => {
   next(new ErrorNotFound('Несуществующий адрес'));
 });
 
+// обработка ошибок celebrate
+app.use(errors());
 // обработчик всех ошибок
 app.use(error);
 
