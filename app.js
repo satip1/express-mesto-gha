@@ -20,7 +20,7 @@ const routerCards = require('./routes/cards');
 const { login, createUser } = require('./controllers/users');
 const { error } = require('./middlewares/error');
 
-const { ErrorNotFound } = require('./errors/ErrorNotFound'); // 404
+const ErrorNotFound = require('./errors/ErrorNotFound'); // 404
 
 // роуты
 // собираем пакеты
