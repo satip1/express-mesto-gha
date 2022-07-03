@@ -42,7 +42,16 @@ app.post(
   createUser,
 );
 // роутер для валидации запроса и логирования пользователя
-app.post('/signin', login);
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+    }),
+  }),
+  login,
+);
 
 // защита роутов
 app.use(auth);
