@@ -14,7 +14,7 @@ const ErrorNotFound = require('../errors/ErrorNotFound'); // 404
 const ErrorBadEmail = require('../errors/ErrorBadEmail'); // 409
 const ErrorOtherError = require('../errors/ErrorBadData'); // 500
 
-const { OK } = require('../constants/constants');
+const { OK, ERROR_DATA, ERROR_OTHER_ERROR } = require('../constants/constants');
 
 // кодовые слова и длина соли хэша
 const { SECRET_CODE, HASHSALT } = require('../constants/constants');
@@ -59,18 +59,27 @@ module.exports.createUser = (req, res, next) => {
         avatar: user.avatar,
       },
     }))
+    //     .catch((err) => {
+    //       //  console.log(err);
+    //       if (err.name === 'ValidatorError') {
+    //         console.log(1);
+    //         next(new ErrorNotFound('Некорректные данные пользователя'));
+    //         return;
+    //       }
+    //       if (err.code === 11000) {
+    //         console.log(2);
+    //         next(new ErrorNotFound('Пользователь с данным емейл уже существует'));
+    //         return;
+    //       }
+    //  console.log(3);
+    //       next(new ErrorOtherError('На сервере произошла ошибка'));
+    //     });
     .catch((err) => {
-       console.log(err);
-      if (err.name === 'ValidatorError') {
-        next(new ErrorNotFound('Некорректные данные пользователя'));
+      if (err.name === 'ValidationError') {
+        res.status(ERROR_DATA).send({ message: `Некорректные данные пользователя. Ошибка: ${err.message}` });
         return;
       }
-      if (err.code === 11000) {
-        next(new ErrorNotFound('Пользователь с данным емейл уже существует'));
-        return;
-      }
-
-      next(new ErrorOtherError('На сервере произошла ошибка'));
+      res.status(ERROR_OTHER_ERROR).send({ message: `На сервере произошла ошибка: ${err}` });
     });
 };
 
