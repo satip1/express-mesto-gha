@@ -29,7 +29,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // временное решение
 app.use((req, res, next) => {
   // вставьте сюда _id созданного в предыдущем пункте пользователя
-  req.user = { _id: '62ab7b35b8324f184cb93f99' };
+  req.user = { _id: '62ad8bbb5d7190d0437af655' };
   next();
 });
 

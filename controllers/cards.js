@@ -47,11 +47,11 @@ module.exports.deleteCard = (req, res, next) => {
         next(new ErrorNotFound('Ошибка: карточкис таким id не найдено'));
         return;
       }
-      if (card.owner !== ownerUser) {
+      if (card.owner._id.toString() !== ownerUser) {
         next(new ErrorDeleteCard('Ошибка: вы не можете удалить эту карточку'));
         return;
       }
-      Card.deleteOne(card).then(() => res.status(OK).send({ message: 'Карточка удалена:' }));
+      Card.deleteOne(card).then(() => res.status(200).send({ message: 'Карточка удалена:' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
