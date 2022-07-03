@@ -60,7 +60,7 @@ app.post(
 );
 
 // защита роутов
-// app.use(auth);
+app.use(auth);
 // роуты для users
 app.use(routerUsers);
 // роуты для карточек
