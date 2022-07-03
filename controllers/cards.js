@@ -49,6 +49,7 @@ module.exports.deleteCard = (req, res, next) => {
       }
       if (card.owner !== ownerUser) {
         next(new ErrorDeleteCard('Ошибка: вы не можете удалить эту карточку'));
+        return;
       }
       Card.deleteOne(card).then(() => res.status(OK).send({ message: 'Карточка удалена:' }));
     })

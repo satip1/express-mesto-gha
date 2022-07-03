@@ -8,11 +8,11 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
 // подключаем кастомные классы ошибок
-const { ErrorBadData } = require('../errors/ErrorBadData'); // 400
-const { ErrorLogin } = require('../errors/ErrorLogin'); // 401
-const { ErrorNotFound } = require('../errors/ErrorNotFound'); // 404
-const { ErrorBadEmail } = require('../errors/ErrorBadEmail'); // 409
-const { ErrorOtherError } = require('../errors/ErrorBadData'); // 500
+const ErrorBadData = require('../errors/ErrorBadData'); // 400
+const ErrorLogin = require('../errors/ErrorLogin'); // 401
+const ErrorNotFound = require('../errors/ErrorNotFound'); // 404
+const ErrorBadEmail = require('../errors/ErrorBadEmail'); // 409
+const ErrorOtherError = require('../errors/ErrorBadData'); // 500
 
 const { OK } = require('../constants/constants');
 
@@ -36,6 +36,7 @@ module.exports.getIdUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ErrorBadData('Некорректные данные пользователя.'));
+        return;
       }
       next(new ErrorOtherError('На сервере произошла ошибка'));
     });
@@ -55,9 +56,11 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ErrorBadData('Некорректные данные пользователя.'));
+        return;
       }
       if (err.code === 11000) {
         next(new ErrorBadEmail('Пользователь с данным емейл уже существует'));
+        return;
       }
       next(new ErrorOtherError('На сервере произошла ошибка'));
     });
@@ -77,6 +80,7 @@ module.exports.patchUserData = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ErrorBadData('Некорректные данные пользователя.'));
+        return;
       }
       next(new ErrorOtherError('На сервере произошла ошибка'));
     });
@@ -93,6 +97,7 @@ module.exports.patchUserAvatar = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ErrorBadData('Некорректные данные пользователя.'));
+        return;
       }
       next(new ErrorOtherError('На сервере произошла ошибка'));
     });

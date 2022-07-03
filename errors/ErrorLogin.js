@@ -1,10 +1,8 @@
 // кастомный класс ошибки 401 неверный логин или пароль
 const { ERROR_LOGIN } = require('../constants/constants');
 
-const textError = 'На сервере произошла ошибка';
-
 class ErrorLogin extends Error {
-  constructor(message = textError) {
+  constructor(message) {
     super(message);
     this.name = 'ErrorLogin';
     this.statusCode = ERROR_LOGIN;
