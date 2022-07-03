@@ -52,7 +52,6 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => User.findOne({ _id: user._id }))
     .then((user) => res.status(OK).send({
       user: {
         name: user.name,
@@ -62,7 +61,7 @@ module.exports.createUser = (req, res, next) => {
     }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        next(new ErrorBadData('Некорректные данные пользователя.'));
+        next(new ErrorNotFound('Некорректные данные пользователя.'));
         return;
       }
       if (err.code === 11000) {
