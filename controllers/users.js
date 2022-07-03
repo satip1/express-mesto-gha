@@ -47,12 +47,20 @@ module.exports.createUser = (req, res, next) => {
   const {
     name, about, avatar, email, password,
   } = req.body;
+  console.log(req.body);
 
   bcrypt.hash(password, HASHSALT)
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
-    .then((user) => res.status(OK).send(user))
+    .then((user) => res.status(OK).send({
+      user: {
+        email: user.email,
+        name: user.name,
+        about: user.about,
+        avatar: user.avatar,
+      },
+    }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ErrorBadData('Некорректные данные пользователя.'));
@@ -62,6 +70,7 @@ module.exports.createUser = (req, res, next) => {
         next(new ErrorBadEmail('Пользователь с данным емейл уже существует'));
         return;
       }
+      // console.log(err);
       next(new ErrorOtherError('На сервере произошла ошибка'));
     });
 };

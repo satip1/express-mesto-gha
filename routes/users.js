@@ -8,7 +8,7 @@ const {
 router.get('/users', getAllUsers);
 router.get('/users/:userId', getIdUser);
 router.get('/users/me', getIdUser);
-router.post('/users', createUser);
+// router.post('/users', createUser);
 router.patch('/users/me', patchUserData);
 router.patch('/users/me/avatar', patchUserAvatar);
 
