@@ -16,7 +16,7 @@ const { celebrate, Joi, errors } = require('celebrate');
 // импортируем роутеры и контроллеры
 const routerUsers = require('./routes/users');
 const routerCards = require('./routes/cards');
-// const { auth } = require('./middlewares/auth');
+const { auth } = require('./middlewares/auth');
 const { login, createUser } = require('./controllers/users');
 const { error } = require('./middlewares/error');
 
