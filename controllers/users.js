@@ -52,6 +52,7 @@ module.exports.createUser = (req, res, next) => {
     .then((hash) => User.create({
       name, about, avatar, email, password: hash,
     }))
+    .then((user) => User.findOne({ _id: user._id }))
     .then((user) => res.status(OK).send({
       user: {
         name: user.name,
