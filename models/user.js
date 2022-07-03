@@ -47,17 +47,17 @@ const userSchema = new mongoose.Schema({
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   // попытаемся найти пользователя по почте
-  return this.findOne({ email }) //
+  return this.findOne({ email }).select('+password') //
     .then((user) => {
       // не нашёлся — отклоняем промис
       if (!user) {
-        return Promise.reject(new ErrorLogin());
+        return Promise.reject(new ErrorLogin('Ошибка email или пароля'));
       }
       // нашёлся — сравниваем хеши
       return bcrypt.compare(password, user.password)
         .then((match) => {
           if (!match) {
-            return Promise.reject(new ErrorLogin());
+            return Promise.reject(new ErrorLogin('Ошибка email или пароля'));
           }
           return user;
         });
