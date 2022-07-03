@@ -11,6 +11,7 @@ const User = require('../models/user');
 const { ErrorBadData } = require('../errors/ErrorBadData'); // 400
 const { ErrorLogin } = require('../errors/ErrorLogin'); // 401
 const { ErrorNotFound } = require('../errors/ErrorNotFound'); // 404
+const { ErrorBadEmail } = require('../errors/ErrorBadEmail'); // 409
 const { ErrorOtherError } = require('../errors/ErrorBadData'); // 500
 
 const { OK } = require('../constants/constants');
@@ -54,6 +55,9 @@ module.exports.createUser = (req, res, next) => {
     .catch((err) => {
       if (err.name === 'ValidationError') {
         next(new ErrorBadData('Некорректные данные пользователя.'));
+      }
+      if (err.code === 11000) {
+        next(new ErrorBadEmail('Пользователь с данным емейл уже существует'));
       }
       next(new ErrorOtherError('На сервере произошла ошибка'));
     });
