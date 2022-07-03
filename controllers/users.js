@@ -60,7 +60,8 @@ module.exports.createUser = (req, res, next) => {
       },
     }))
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+       console.log(err);
+      if (err.name === 'ValidatorError') {
         next(new ErrorNotFound('Некорректные данные пользователя'));
         return;
       }
@@ -68,7 +69,7 @@ module.exports.createUser = (req, res, next) => {
         next(new ErrorNotFound('Пользователь с данным емейл уже существует'));
         return;
       }
-      // console.log(err);
+
       next(new ErrorOtherError('На сервере произошла ошибка'));
     });
 };
