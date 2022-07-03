@@ -75,7 +75,7 @@ module.exports.createUser = (req, res, next) => {
 
 // обновляем данные пользователя
 module.exports.patchUserData = (req, res, next) => {
-  const owner = req.user._id; // заглушка
+  const owner = req.user._id; // достали из пейлоуда
   const { name, about } = req.body;
 
   // обновляем данные
@@ -95,7 +95,7 @@ module.exports.patchUserData = (req, res, next) => {
 
 // обновляем аватар пользователя
 module.exports.patchUserAvatar = (req, res, next) => {
-  const owner = req.user._id; // заглушка
+  const owner = req.user._id; // достали из пейлоуда
   const { avatar } = req.body;
 
   // обновляем аватар{ message: 'Аватар обновлен' }
