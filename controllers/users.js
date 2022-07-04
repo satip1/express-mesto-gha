@@ -29,7 +29,10 @@ module.exports.getAllUsers = (req, res, next) => {
 // запрос по userId
 module.exports.getIdUser = (req, res, next) => {
   const userId = req.user._id;
-  if (userId !== req.params.userId) { res.status(700).send({ message: 'gdfgdfjgndjfngjdfjngdg' }); return; }
+  if (userId !== req.params.userId) {
+    next(new ErrorNotFound('Пользователь с данным id не существует'));
+    return;
+  }
   User.findById(userId)
     .then((user) => {
       if (!user) {
