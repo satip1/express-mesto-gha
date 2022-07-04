@@ -29,17 +29,17 @@ module.exports.getAllUsers = (req, res, next) => {
 // запрос по userId
 module.exports.getIdUser = (req, res, next) => {
   const userId = req.user._id;
-  if (userId !== req.params.userId) {
-    next(new ErrorNotFound('Пользователь с данным id не существует'));
-    return;
-  }
+  // if (userId !== req.params.userId) {
+  //   next(new ErrorNotFound('Пользователь с данным id не существует'));
+  //   return;
+  // }
   User.findById(userId)
     .then((user) => {
       if (!user) {
         next(new ErrorNotFound('Пользователь с данным id не существует'));
         return;
       }
-      res.status(777).send({ user });
+      res.status(OK).send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
