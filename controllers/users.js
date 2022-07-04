@@ -89,8 +89,11 @@ module.exports.patchUserData = (req, res, next) => {
   // обновляем данные
   User.findByIdAndUpdate(owner, { name, about }, { new: true, runValidators: true })
     .then((user) => {
-      if (user) res.status(OK).send({ user });
-      else next(new ErrorNotFound('Пользователь с данным id не существует'));
+      if (!user) {
+        next(new ErrorNotFound('Пользователь с данным id не существует'));
+        return;
+      }
+      res.status(OK).send({ user });
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
