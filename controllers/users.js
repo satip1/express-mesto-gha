@@ -31,8 +31,11 @@ module.exports.getIdUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .then((user) => {
-      if (user) res.status(OK).send({ user });
-      else next(new ErrorNotFound('Пользователь с данным id не существует'));
+      if (!user) {
+        next(new ErrorNotFound('Пользователь с данным id не существует'));
+        return;
+      }
+      res.status(OK).send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
