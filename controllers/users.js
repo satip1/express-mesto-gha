@@ -30,8 +30,8 @@ module.exports.getAllUsers = (req, res, next) => {
 module.exports.getIdUser = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
-      if (user) res.status(OK).send({ data: user });
-      else next(new ErrorNotFound('Пользователь с данным id не существует'));
+      if (user) res.status(OK).send({ user });
+      else throw (new ErrorNotFound('Пользователь с данным id не существует'));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
