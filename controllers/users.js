@@ -39,7 +39,7 @@ module.exports.getIdUser = (req, res, next) => {
         next(new ErrorNotFound('Пользователь с данным id не существует'));
         return;
       }
-      res.status(OK).send({ user });
+      res.status(777).send({ user });
     })
     .catch((err) => {
       if (err.name === 'CastError') {
