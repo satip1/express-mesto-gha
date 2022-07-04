@@ -3,7 +3,6 @@
 const jwt = require('jsonwebtoken');
 
 const ErrorLogin = require('../errors/ErrorLogin');
-const ErrorNotFound = require('../errors/ErrorNotFound');
 const { SECRET_CODE } = require('../constants/constants');
 
 module.exports.auth = (req, res, next) => {
@@ -11,7 +10,7 @@ module.exports.auth = (req, res, next) => {
 
   // если авторизации нет или не содержит Bearer
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new ErrorNotFound('Необходима авторизация ккк'));
+    return next(new ErrorLogin('Необходима авторизация ккк'));
   }
 
   const token = authorization.replace('Bearer ', '');
