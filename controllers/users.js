@@ -26,13 +26,29 @@ module.exports.getAllUsers = (req, res, next) => {
     .catch(() => next(new ErrorOtherError('На сервере произошла ошибка')));
 };
 
+// запрос данных текущего пользователя
+module.exports.getMeUser = (req, res, next) => {
+  const userId = req.user._id;
+  User.findById(userId)
+    .then((user) => {
+      if (!user) {
+        next(new ErrorNotFound('Пользователь с данным id не существует'));
+        return;
+      }
+      res.status(OK).send({ user });
+    })
+    .catch((err) => {
+      if (err.name === 'CastError') {
+        next(new ErrorBadData('Некорректные данные пользователя.'));
+        return;
+      }
+      next(new ErrorOtherError('На сервере произошла ошибка'));
+    });
+};
+
 // запрос по userId
 module.exports.getIdUser = (req, res, next) => {
-  const userId = req.user._id;
-  if (userId !== req.params.userId) {
-    next(new ErrorNotFound('Пользователь с данным id не существует'));
-    return;
-  }
+  const userId = req.params._id;
   User.findById(userId)
     .then((user) => {
       if (!user) {
@@ -84,7 +100,7 @@ module.exports.createUser = (req, res, next) => {
 
 // обновляем данные пользователя
 module.exports.patchUserData = (req, res, next) => {
-  const owner = req.user._id; // достали из пейлоуда
+  const owner = req.user._id; // достали из пейлоуда после auth
   const { name, about } = req.body;
 
   // обновляем данные
@@ -110,9 +126,14 @@ module.exports.patchUserAvatar = (req, res, next) => {
   const owner = req.user._id; // достали из пейлоуда
   const { avatar } = req.body;
 
-  // обновляем аватар{ message: 'Аватар обновлен' }
   User.findByIdAndUpdate(owner, { avatar }, { new: true, runValidators: true })
-    .then((user) => res.status(OK).send(user))
+    .then((user) => {
+      if (!user) {
+        next(new ErrorNotFound('Пользователь с данным id не существует'));
+        return;
+      }
+      res.status(OK).send(user);
+    })
     .catch((err) => {
       if (err.name === 'CastError') {
         next(new ErrorBadData('Некорректные данные пользователя.'));
@@ -125,7 +146,6 @@ module.exports.patchUserAvatar = (req, res, next) => {
 // обработка логина
 module.exports.login = (req, res, next) => {
   const { email, password } = req.body;
-  // ищем пользователя по почте
   User.findUserByCredentials(email, password)
     .then((user) => {
       const token = jwt.sign({ _id: user._id }, SECRET_CODE, { expiresIn: '7d' });

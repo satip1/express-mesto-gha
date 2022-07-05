@@ -41,19 +41,18 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true,
+    minlength: 8,
     select: false, // необходимо добавить поле select чтобы не возвращался хэш пароля
   },
 });
 
 userSchema.statics.findUserByCredentials = function (email, password) {
   // попытаемся найти пользователя по почте
-  return this.findOne({ email }).select('+password') //
+  return this.findOne({ email }).select('+password')
     .then((user) => {
-      // не нашёлся — отклоняем промис
       if (!user) {
         return Promise.reject(new ErrorLogin('Ошибка email или пароля'));
       }
-      // нашёлся — сравниваем хеши
       return bcrypt.compare(password, user.password)
         .then((match) => {
           if (!match) {

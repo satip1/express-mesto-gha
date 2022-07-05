@@ -12,14 +12,14 @@ const { OK } = require('../constants/constants');
 // запрос всех карточек
 module.exports.getAllCards = (req, res, next) => {
   Card.find({})
-    .then((cards) => res.send(cards))
+    .then((cards) => res.status(OK).send(cards))
     .catch(() => next(new ErrorOtherError()));
 };
 
 // создаем новую карточку
 module.exports.creatCard = (req, res, next) => {
   const { name, link, likes = [] } = req.body;
-  const owner = req.user._id; // временная заглушка для идентификатора пользователя
+  const owner = req.user._id;
 
   // создаем новую карточку
   Card.create({
@@ -37,8 +37,7 @@ module.exports.creatCard = (req, res, next) => {
 
 // удаляем карточку
 module.exports.deleteCard = (req, res, next) => {
-  const ownerUser = req.user._id; // временная заглушка для идентификатора пользователя
-
+  const ownerUser = req.user._id;
   // проверка   на возможность удаления
   // если id автора и пользователя совпадают, удалим
   Card.findById(req.params.cardId)
@@ -47,11 +46,11 @@ module.exports.deleteCard = (req, res, next) => {
         next(new ErrorNotFound('Ошибка: карточкис таким id не найдено'));
         return;
       }
-      if (card.owner._id.toString() !== ownerUser) {
+      if (card.owner._id.toString() !== ownerUser.toString()) {
         next(new ErrorDeleteCard('Ошибка: вы не можете удалить эту карточку'));
         return;
       }
-      Card.deleteOne(card).then(() => res.status(200).send({ message: 'Карточка удалена:' }));
+      Card.deleteOne(card).then(() => res.status(OK).send({ message: 'Карточка удалена:' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -64,7 +63,7 @@ module.exports.deleteCard = (req, res, next) => {
 
 // ставим лайк карточке
 module.exports.putLikeCard = (req, res, next) => {
-  const owner = req.user._id; // временная заглушка для идентификатора пользователя
+  const owner = req.user._id;
 
   // ставим лайк
   Card.findByIdAndUpdate(req.params.cardId, { $addToSet: { likes: owner } }, { new: true })
@@ -86,7 +85,7 @@ module.exports.putLikeCard = (req, res, next) => {
 
 // удаляем лайк карточке
 module.exports.cancelLikeCard = (req, res, next) => {
-  const owner = req.user._id; // временная заглушка для идентификатора пользователя
+  const owner = req.user._id;
 
   // убираем лайк
   Card.findByIdAndUpdate(req.params.cardId, { $pull: { likes: owner } }, { new: true })

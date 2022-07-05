@@ -21,6 +21,7 @@ const { login, createUser } = require('./controllers/users');
 const { error } = require('./middlewares/error');
 
 const ErrorNotFound = require('./errors/ErrorNotFound'); // 404
+const { REG_LINK } = require('./constants/constants');
 
 // роуты
 // собираем пакеты
@@ -34,9 +35,9 @@ app.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string(),
+      avatar: Joi.string().pattern(REG_LINK),
       email: Joi.string().required().email(),
-      password: Joi.string().required(),
+      password: Joi.string().required().min(8),
     }),
   }),
   createUser,
@@ -47,7 +48,7 @@ app.post(
   celebrate({
     body: Joi.object().keys({
       email: Joi.string().required().email(),
-      password: Joi.string().required(),
+      password: Joi.string().required().min(8),
     }),
   }),
   login,

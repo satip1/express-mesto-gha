@@ -10,7 +10,7 @@ module.exports.auth = (req, res, next) => {
 
   // если авторизации нет или не содержит Bearer
   if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new ErrorLogin('Необходима авторизация ккк'));
+    return next(new ErrorLogin('Необходима авторизация'));
   }
 
   const token = authorization.replace('Bearer ', '');
