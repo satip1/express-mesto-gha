@@ -148,7 +148,7 @@ module.exports.login = (req, res, next) => {
       res.status(OK).send({ token });
     })
     .catch((err) => {
-      if (err.status === 401) {
+      if (err.statusCode === 401) {
         next(err);
         return;
       }

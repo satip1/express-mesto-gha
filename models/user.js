@@ -5,7 +5,6 @@ const validEmail = require('validator/lib/isEmail');
 const bcrypt = require('bcryptjs');
 
 const ErrorLogin = require('../errors/ErrorLogin');
-const ErrorBadData = require('../errors/ErrorBadData');
 
 const { REG_LINK } = require('../constants/constants');
 
@@ -53,7 +52,7 @@ userSchema.statics.findUserByCredentials = function (email, password) {
   return this.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new ErrorBadData('Ошибка email или пароля'));
+        return Promise.reject(new ErrorLogin('Ошибка email или пароля'));
       }
       return bcrypt.compare(password, user.password)
         .then((match) => {
