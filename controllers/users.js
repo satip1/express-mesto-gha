@@ -48,8 +48,7 @@ module.exports.getMeUser = (req, res, next) => {
 
 // запрос по userId
 module.exports.getIdUser = (req, res, next) => {
-  const userId = req.params._id;
-  User.findById(userId)
+  User.findById(req.params.userId)
     .then((user) => {
       if (!user) {
         next(new ErrorNotFound('Пользователь с данным id не существует'));
